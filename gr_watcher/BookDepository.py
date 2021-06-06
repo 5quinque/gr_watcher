@@ -32,13 +32,12 @@ class BookDepository:
 
         soup = BeautifulSoup(r.content, "html.parser")
 
-        # We've been redirected to a single book
         if r.history:
+            # We've been redirected to a single book
             sale_price = soup.find(class_="sale-price")
 
-            if sale_price:
-                price = sale_price.find(text=True).strip()
-                book_url = r.url
+            price = sale_price.find(text=True).strip()
+            book_url = r.url
         else:
             book_item = soup.find(class_="book-item")
 
@@ -52,8 +51,3 @@ class BookDepository:
 
         self.price = price
         self.book_url = book_url
-
-
-# x = BookDepository("Elie Wiesel Night")
-# x = BookDepository("Christopher Moore A Dirty Job")
-# x.get_price()

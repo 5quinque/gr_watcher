@@ -1,3 +1,3 @@
 env
-gr_watcher/__pycache__
-gr_watcher/books.db
+__pycache__
+author_book_price.db

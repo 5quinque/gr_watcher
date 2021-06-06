@@ -13,6 +13,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Session, sessionmaker, relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
+from importlib import resources
 import datetime
 
 Base = declarative_base()
@@ -44,8 +45,9 @@ class Price(Base):
 
 
 class Database:
-    def __init__(self, dbname="books.db"):
-        self.engine = create_engine(f"sqlite:///{dbname}")
+    def __init__(self, dbname="author_book_price.db"):
+        with resources.path("data", dbname) as sqlite_filepath:
+            self.engine = create_engine(f"sqlite:///{sqlite_filepath}")
 
         Session = sessionmaker()
         Session.configure(bind=self.engine)
@@ -142,6 +144,7 @@ class Database:
         self.session.commit()
 
     def add_price(self, price, book, shop_url):
+        # [TODO] Compare with latest price and only add a new record if different
         price = Price(price=price, book_id=book.book_id, shop_url=shop_url)
         self.session.add(price)
 
