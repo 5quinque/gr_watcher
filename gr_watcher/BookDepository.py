@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
-import requests
+
 from bs4 import BeautifulSoup
+import logging
+import requests
 import urllib
 
 
@@ -46,7 +48,7 @@ class BookDepository:
                 href = book_item.find(class_="item-img").find("a").get("href")
                 book_url = f"https://www.bookdepository.com{href}"
             else:
-                print("No books found")
+                logging.error(f"No price found for {self.book_title}")
                 return
 
         self.price = price

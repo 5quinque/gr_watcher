@@ -1,5 +1,6 @@
-import asyncio
 import aiohttp
+import asyncio
+import logging
 import requests
 from bs4 import BeautifulSoup
 
@@ -42,8 +43,8 @@ class GoodReads:
 
         self.loop.run_until_complete(asyncio.wait(self.tasks))
 
-        # for b in self.to_read_books:
-        #     print(b["title"], b["author"])
+        for b in self.to_read_books:
+            logging.debug(f"Found: {b['title']} {b['author']}")
 
     def get_books(self, books):
         for book in books:
@@ -60,6 +61,7 @@ class GoodReads:
                 soup = BeautifulSoup(await response.read(), "html.parser")
 
                 # isbn = soup.find(itemprop="isbn")
+                # [TODO] Catch errors at this point
                 author = soup.find(class_="authorName").find(itemprop="name")
                 title = soup.find(id="bookTitle")
 
@@ -73,7 +75,5 @@ class GoodReads:
                     "author": author,
                     "url": url,
                 }
-
-                # print(title, author)
 
                 self.to_read_books.append(book_dict)

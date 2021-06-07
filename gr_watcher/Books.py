@@ -15,6 +15,7 @@ from sqlalchemy.orm import Session, sessionmaker, relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 from importlib import resources
 import datetime
+import logging
 
 Base = declarative_base()
 
@@ -46,8 +47,11 @@ class Price(Base):
 
 class Database:
     def __init__(self, dbname="author_book_price.db"):
-        with resources.path("data", dbname) as sqlite_filepath:
-            self.engine = create_engine(f"sqlite:///{sqlite_filepath}")
+        try:
+            with resources.path("data", dbname) as sqlite_filepath:
+                self.engine = create_engine(f"sqlite:///{sqlite_filepath}")
+        except FileNotFoundError:
+            logging.error(f"{dbname} not found")
 
         Session = sessionmaker()
         Session.configure(bind=self.engine)
@@ -84,8 +88,7 @@ class Database:
         try:
             metadata.create_all(self.engine)
         except Exception as e:
-            print("Error occurred during Table creation!")
-            print(e)
+            logging.error(f"Error occurred during Table creation: {e}")
 
     def get_author(self, author_name):
         first_name, _, last_name = author_name.partition(" ")
