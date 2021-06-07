@@ -9,51 +9,52 @@ from BookDepository import BookDepository
 from utils.bcolors import bcolors
 
 
-def get_books(database):
-    good_reads = GoodReads(
-        "https://www.goodreads.com/review/list/74698639-ryan?per_page=100&shelf=to-read"
-    )
+class Watcher:
+    def __init__(self, list_url):
+        self.database = Database()
+        self.list_url = list_url
 
-    # good_reads = GoodReads(
-    #     "https://www.goodreads.com/review/list/74698639-ryan?shelf=test"
-    # )
+    def get_books(self):
+        good_reads = GoodReads(self.list_url)
 
-    good_reads.get_to_read()
+        good_reads.get_to_read()
 
-    for book in good_reads.to_read_books:
-        database.add_book(book["author"], book["title"])
+        for book in good_reads.to_read_books:
+            self.database.add_book(book["author"], book["title"])
 
+    def get_prices(self):
+        for author in self.database.get_authors():
+            for book in author.books:
+                book_title = f"{author.first_name} {author.last_name} {book.title}"
 
-def get_prices(database):
-    for author in database.get_authors():
-        for book in author.books:
-            book_title = f"{author.first_name} {author.last_name} {book.title}"
+                book_depo = BookDepository(book_title)
+                book_depo.get_price()
+                self.database.add_price(book_depo.price, book, book_depo.book_url)
 
-            book_depo = BookDepository(book_title)
-            book_depo.get_price()
-            database.add_price(book_depo.price, book, book_depo.book_url)
+    def print_prices(self):
+        for author in self.database.get_authors():
+            for book in author.books:
+                book_title = f"{author.first_name} {author.last_name} {book.title}"
 
-
-def print_prices(database):
-    for author in database.get_authors():
-        for book in author.books:
-            book_title = f"{author.first_name} {author.last_name} {book.title}"
-
-            for price in book.prices:
-                logging.info(
-                    f"{bcolors.OKGREEN}{price.price}{bcolors.ENDC} {book_title}"
-                )
+                for price in book.prices:
+                    logging.info(
+                        f"{bcolors.OKGREEN}{price.price}{bcolors.ENDC} {book_title}"
+                    )
 
 
 def main():
-    database = Database()
+    list = (
+        "https://www.goodreads.com/review/list/74698639-ryan?per_page=100&shelf=to-read"
+    )
+    list = "https://www.goodreads.com/review/list/74698639-ryan?shelf=test"
 
-    # # Add the GoodReads list to our database
-    get_books(database)
+    watcher = Watcher(list)
+    # Add the GoodReads list to our database
+    watcher.get_books()
 
-    get_prices(database)
+    watcher.get_prices()
 
-    print_prices(database)
+    watcher.print_prices()
 
 
 if __name__ == "__main__":
