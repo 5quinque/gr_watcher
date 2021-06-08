@@ -8,14 +8,15 @@ import urllib
 
 
 class BookDepository:
-    def __init__(self, book_title):
+    def __init__(self, author, title):
         self.book_formats = {"Paperback": 1, "Hardback": 2}
         self.languages = {"English": 123}
 
         self.set_format()
         self.set_language()
 
-        self.book_title = book_title
+        self.author = author
+        self.title = title
         self.price = ""
         self.book_url = ""
 
@@ -26,7 +27,7 @@ class BookDepository:
         self.language = self.languages[language]
 
     def get_price(self):
-        search_term = urllib.parse.quote_plus(self.book_title)
+        search_term = urllib.parse.quote_plus(f"{self.author} {self.title}")
 
         url = f"https://www.bookdepository.com/search?searchTerm={search_term}&availability=1&searchLang={self.language}&format={self.book_format}"
 
@@ -42,6 +43,9 @@ class BookDepository:
             book_url = r.url
         else:
             book_item = soup.find(class_="book-item")
+
+            # [TODO] Check the book we've found actually matches
+            #        the author/title we've searched for
 
             if book_item:
                 price = book_item.find(class_="price").find(text=True).strip()

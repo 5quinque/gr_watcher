@@ -8,6 +8,7 @@ beautifulsoup4 = "*"
 requests = "*"
 aiohttp = "*"
 sqlalchemy = "*"
+unidecode = "*"
 
 [dev-packages]
 
