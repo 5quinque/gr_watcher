@@ -9,6 +9,7 @@ requests = "*"
 aiohttp = "*"
 sqlalchemy = "*"
 unidecode = "*"
+prometheus-client = "*"
 
 [dev-packages]
 

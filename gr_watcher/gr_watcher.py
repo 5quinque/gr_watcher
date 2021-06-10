@@ -2,9 +2,11 @@
 
 import logging
 from importlib import resources
+from prometheus_client import start_http_server, Gauge
+import time
 
 from GoodReads import GoodReads
-from Books import Database
+
 from bookshops.AbeBooks import AbeBooks
 from bookshops.BookDepository import BookDepository
 from bookshops.Bookshop import Bookshop
@@ -13,54 +15,65 @@ from utils.bcolors import bcolors
 
 class Watcher:
     def __init__(self, list_url):
-        self.database = Database()
+        # self.database = Database()
         self.list_url = list_url
+        self.books = []
+
+        self.gauge = Gauge(
+            "goodreads_list1",
+            "Description of gauge",
+            ["title", "author", "bookshop"],
+        )
 
     def get_books(self):
-        good_reads = GoodReads(self.list_url)
+        self.books = []
 
+        good_reads = GoodReads(self.list_url)
         good_reads.get_to_read()
 
         for book in good_reads.to_read_books:
-            self.database.add_book(book["author"], book["title"])
+            # self.database.add_book(book["author"], book["title"])
+            self.books.append({"author": book["author"], "title": book["title"]})
 
     def get_prices(self):
-        for author in self.database.get_authors():
-            for book in author.books:
-                # book_depo = BookDepository(author=f"{author.first_name} {author.last_name}", title=book.title)
-                # book_depo.get_price()
-                # self.database.add_price(book_depo.price, book, book_depo.book_url)
+        for book in self.books:
+            abe_books = AbeBooks(author=book["author"], title=book["title"])
+            abe_books.get_price()
+            if abe_books.price:
+                self.gauge.labels(book["title"], book["author"], "abebooks").set(
+                    abe_books.price
+                )
+                logging.info(
+                    f"{bcolors.OKGREEN}{abe_books.price}{bcolors.ENDC} [abebooks] {book['title']} {book['author']}"
+                )
 
-                # bookshop = Bookshop(author=f"{author.first_name} {author.last_name}", title=book.title)
-                # bookshop.get_price()
-                # self.database.add_price(bookshop.price, book, bookshop.book_url)
-
-                abe_books = AbeBooks(author=f"{author.first_name} {author.last_name}", title=book.title)
-                abe_books.get_price()
-                # self.database.add_price(abe_books.price, book, abe_books.book_url)
-
-    def print_prices(self):
-        for author in self.database.get_authors():
-            for book in author.books:
-                book_title = f"{author.first_name} {author.last_name} {book.title}"
-
-                for price in book.prices:
-                    logging.info(
-                        f"{bcolors.OKGREEN}{price.price}{bcolors.ENDC} {book_title}"
-                    )
+            book_depo = BookDepository(author=book["author"], title=book["title"])
+            book_depo.get_price()
+            if book_depo.price:
+                self.gauge.labels(book["title"], book["author"], "bookdepository").set(
+                    book_depo.price
+                )
+                logging.info(
+                    f"{bcolors.OKGREEN}{book_depo.price}{bcolors.ENDC} [bookdepository] {book['title']} {book['author']}"
+                )
 
 
 def main():
+    # Start up the server to expose the metrics.
+    start_http_server(5000, addr="0.0.0.0")
+
     list = (
         "https://www.goodreads.com/review/list/74698639-ryan?per_page=100&shelf=to-read"
     )
-    list = "https://www.goodreads.com/review/list/74698639-ryan?shelf=test"
+    # list = "https://www.goodreads.com/review/list/74698639-ryan?shelf=test"
 
     watcher = Watcher(list)
-    # Add the GoodReads list to our database
-    # watcher.get_books()
 
-    watcher.get_prices()
+    while True:
+        watcher.get_books()
+        watcher.get_prices()
+
+        time.sleep(3000)
 
     # watcher.print_prices()
 

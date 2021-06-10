@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 import logging
 import requests
 import urllib
-
+import re
 
 class BookDepository:
     def __init__(self, author, title):
@@ -35,11 +35,13 @@ class BookDepository:
 
         soup = BeautifulSoup(r.content, "html.parser")
 
+        price_regexp = re.compile("\d+\.\d+")
+
         if r.history:
             # We've been redirected to a single book
             sale_price = soup.find(class_="sale-price")
 
-            price = sale_price.find(text=True).strip()
+            price = sale_price.find(text=True)
             book_url = r.url
         else:
             book_item = soup.find(class_="book-item")
@@ -48,12 +50,19 @@ class BookDepository:
             #        the author/title we've searched for
 
             if book_item:
-                price = book_item.find(class_="price").find(text=True).strip()
+                price = book_item.find(class_="price").find(text=True)
+
                 href = book_item.find(class_="item-img").find("a").get("href")
                 book_url = f"https://www.bookdepository.com{href}"
             else:
-                logging.error(f"No price found for {self.book_title}")
+                logging.error(f"No price found for {self.author} {self.title}")
                 return
 
-        self.price = price
+        cleaned_price = price_regexp.search(price)
+
+        if cleaned_price:
+            self.price = cleaned_price.group()
+        else:
+            self.price = "0.00"
+
         self.book_url = book_url
