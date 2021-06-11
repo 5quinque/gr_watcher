@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 import logging
 from importlib import resources
 from prometheus_client import start_http_server, Gauge
@@ -9,7 +10,6 @@ from GoodReads import GoodReads
 
 from bookshops.AbeBooks import AbeBooks
 from bookshops.BookDepository import BookDepository
-from bookshops.Bookshop import Bookshop
 from bookshops.Waterstones import Waterstones
 from utils.bcolors import bcolors
 
@@ -35,7 +35,7 @@ class Watcher:
         shops = {}
 
         for shop, shop_class in self.bookshops.items():
-            shops[shop] = shop_class(book["title"], book["author"])
+            shops[shop] = shop_class(book["author"], book["title"])
 
         return shops
 
@@ -52,8 +52,20 @@ class Watcher:
 
     def get_prices(self):
         for book in self.books:
+            best_shop_object = None
+
             for shop, shop_object in book["shops"].items():
-                self.get_shop_price(shop_object, shop, book)
+                shop_object.get_price()
+                if best_shop_object:
+                    if shop_object.price < best_shop_object.price:
+                        best_shop_object = shop_object
+                else:
+                    best_shop_object = shop_object
+
+            logging.info(
+                f"{bcolors.OKGREEN}{best_shop_object.price}{bcolors.ENDC}  {book['title']} {book['author']} - {best_shop_object.book_url}"
+            )
+            # self.get_shop_price(shop_object, shop, book)
 
     def get_shop_price(self, shop_object, shop_label, book):
         shop_object.get_price()
@@ -67,13 +79,13 @@ class Watcher:
 
 
 def main():
+    list = os.environ.get("GR_LIST")
+
+    if list is None:
+        exit("Provide a list with `export GR_LIST=<GoodReads List URL>`")
+
     # Start up the server to expose the metrics.
     start_http_server(5000, addr="0.0.0.0")
-
-    # list = (
-    #     "https://www.goodreads.com/review/list/74698639-ryan?per_page=100&shelf=to-read"
-    # )
-    list = "https://www.goodreads.com/review/list/74698639-ryan?shelf=test"
 
     watcher = Watcher(list)
 
