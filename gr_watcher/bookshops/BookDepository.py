@@ -7,6 +7,7 @@ import requests
 import urllib
 import re
 
+
 class BookDepository:
     def __init__(self, author, title):
         self.book_formats = {"Paperback": 1, "Hardback": 2}

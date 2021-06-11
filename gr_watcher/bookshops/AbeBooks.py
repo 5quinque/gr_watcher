@@ -6,6 +6,7 @@ import logging
 import requests
 import urllib
 from unidecode import unidecode
+import re
 
 
 class AbeBooks:
@@ -25,6 +26,7 @@ class AbeBooks:
         r = requests.get(url)
 
         soup = BeautifulSoup(r.content, "html.parser")
+        price_regexp = re.compile("\d+\.\d+")
 
         book_item = soup.find(class_="result-item")
 
@@ -38,5 +40,11 @@ class AbeBooks:
             )
             return
 
-        self.price = price
+        cleaned_price = price_regexp.search(price)
+
+        if cleaned_price:
+            self.price = cleaned_price.group()
+        else:
+            self.price = "0.00"
+
         self.book_url = book_url
