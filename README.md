@@ -21,3 +21,10 @@ export GR_LIST=https://www.goodreads.com/review/list/74698639-ryan?shelf=test
 
 ## Prometheus
 
+## Testing
+
+Run `pytest` with coverage
+
+```bash
+pytest --cov=gr_watcher
+```

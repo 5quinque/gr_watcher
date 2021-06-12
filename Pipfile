@@ -10,6 +10,8 @@ aiohttp = "*"
 sqlalchemy = "*"
 unidecode = "*"
 prometheus-client = "*"
+pytest = "*"
+pytest-cov = "*"
 
 [dev-packages]
 

@@ -17,7 +17,7 @@ class Bookshop:
 
         self.author = author
         self.title = title
-        self.price = ""
+        self.price = 0.00
 
         self.bookshop_base_url = ""
         self.search_url = ""
@@ -29,12 +29,12 @@ class Bookshop:
         self.book_format = self.book_formats[format]
 
     def clean_price(self):
-        price_regexp = re.compile("\d+\.\d+")
+        price_regexp = re.compile(r"\d+\.\d+")
         cleaned_price = price_regexp.search(self.price)
         if cleaned_price:
-            self.price = cleaned_price.group()
+            self.price = float(cleaned_price.group())
         else:
-            self.price = "0.00"
+            self.price = 0.00
 
     def get_price_text(self, book_item):
         return book_item.find(class_="price").find(text=True)
