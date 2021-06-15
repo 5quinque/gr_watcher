@@ -79,4 +79,6 @@ class GoodReads:
 
                     self.to_read_books.append(book_dict)
                 except:
-                    logging.error(f"Error getting book info.. {response.status} {response.read()}")
+                    logging.error(
+                        f"Error getting book info.. {response.status} {response.read()}"
+                    )

@@ -10,6 +10,8 @@ class AbeBooks(Bookshop):
     def __init__(self, author, title):
         super().__init__(author, title)
 
+        self.label = "abebooks"
+
         search_author = urllib.parse.quote_plus(unidecode(self.author))
         search_title = urllib.parse.quote_plus(unidecode(self.title))
 

@@ -23,6 +23,7 @@ def main():
     while True:
         watcher.get_books()
         watcher.get_prices()
+        watcher.output_prices()
 
         time.sleep(3000)
 

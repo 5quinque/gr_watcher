@@ -3,7 +3,8 @@
 import logging
 from prometheus_client import Gauge
 
-from .GoodReads import GoodReads
+from .book import Book
+from .goodreads import GoodReads
 from .bookshops.AbeBooks import AbeBooks
 from .bookshops.BookDepository import BookDepository
 from .bookshops.Waterstones import Waterstones
@@ -12,11 +13,11 @@ from .utils.bcolors import bcolors
 
 class Watcher:
     def __init__(self, list_url, gauge=None):
-        self.bookshops = {
-            "abebooks": AbeBooks,
-            "bookdepository": BookDepository,
-            "waterstones": Waterstones,
-        }
+        self.bookshops = [
+            AbeBooks,
+            BookDepository,
+            Waterstones,
+        ]
 
         self.list_url = list_url
         self.books = []
@@ -30,11 +31,23 @@ class Watcher:
         else:
             self.gauge = gauge
 
-    def create_shops(self, book):
-        shops = {}
+    @property
+    def books(self):
+        return self.__books
 
-        for shop, shop_class in self.bookshops.items():
-            shops[shop] = shop_class(book["author"], book["title"])
+    @books.setter
+    def books(self, books):
+        self.__books = []
+
+        for book in books:
+            book.shops = self.create_shops(book)
+            self.__books.append(book)
+
+    def create_shops(self, book):
+        shops = []
+
+        for shop_class in self.bookshops:
+            shops.append(shop_class(book.author, book.title))
 
         return shops
 
@@ -45,28 +58,20 @@ class Watcher:
         good_reads.get_to_read()
 
         for book in good_reads.to_read_books:
-            book = {"author": book["author"], "title": book["title"]}
-            book["shops"] = self.create_shops(book)
+            book = Book(book["author"], book["title"])
+            book.shops = self.create_shops(book)
+
             self.books.append(book)
 
     def get_prices(self):
         for book in self.books:
-            best_shop_object = None
-            best_shop = None
+            book.get_prices()
 
-            for shop, shop_object in book["shops"].items():
-                shop_object.get_price()
-                if (
-                    best_shop_object is None
-                    or shop_object.price < best_shop_object.price
-                ):
-                    best_shop_object = shop_object
-                    best_shop = shop
-
+    def output_prices(self):
+        for book in self.books:
             logging.info(
-                f"{bcolors.OKGREEN}{best_shop_object.price}{bcolors.ENDC} [{best_shop}] {book['title']} {book['author']} - {best_shop_object.book_url}"
+                f"{bcolors.OKGREEN}{book.shop.price}{bcolors.ENDC} [{book.shop.label}] {book.title} {book.author} - {book.shop.book_url}"
             )
-            self.gauge.labels(book["title"], book["author"], best_shop).set(
-                best_shop_object.price
+            self.gauge.labels(book.title, book.author, book.shop.label).set(
+                book.shop.price
             )
-

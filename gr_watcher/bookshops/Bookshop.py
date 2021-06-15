@@ -11,6 +11,7 @@ import re
 
 class Bookshop:
     def __init__(self, author, title):
+        self.label = None
         self.book_format = None
 
         self.search_url = ""

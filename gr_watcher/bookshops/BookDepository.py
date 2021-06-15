@@ -8,6 +8,8 @@ class BookDepository(Bookshop):
     def __init__(self, author, title):
         super().__init__(author, title)
 
+        self.label = "bookdepository"
+
         self.book_formats = {"Paperback": 1, "Hardback": 2}
         self.languages = {"English": 123}
 
@@ -28,4 +30,5 @@ class BookDepository(Bookshop):
 
     def handle_redirect(self, soup, r):
         self.price = soup.find(class_="sale-price").find(text=True)
+        self.clean_price()
         self.book_url = r.url
