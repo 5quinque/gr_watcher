@@ -16,7 +16,7 @@ pipenv shell
 
 ```bash
 export GR_LIST=https://www.goodreads.com/review/list/74698639-ryan?shelf=test
-./gr_watcher.py
+python -m gr_watcher
 ```
 
 ## Prometheus
