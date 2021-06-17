@@ -14,5 +14,9 @@ class Waterstones(Bookshop):
         self.search_url = f"https://www.waterstones.com/books/search/term/{self.search_term}/sort/price-asc"
 
     def get_book_item(self, soup):
-        # [TODO]: Don't get a 'cancelled' book. i.e. lolita vladimir nabokov
-        return soup.find(class_="book-preview")
+        book_items = soup.findAll(class_="book-preview")
+
+        for book_item in book_items:
+            format = book_item.find(class_="format").find(text=True)
+            if format != "Cancelled":
+                return book_item
