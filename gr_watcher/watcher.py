@@ -3,6 +3,7 @@
 import logging
 from prometheus_client import Gauge
 from urllib.parse import urlsplit, parse_qs
+import re
 
 from .book import Book
 from .goodreads import GoodReads
@@ -29,7 +30,7 @@ class Watcher:
                 "Description of gauge",
                 ["title", "author", "bookshop"],
             )
-        else: 
+        else:
             self.gauge = gauge
 
     @property
@@ -45,10 +46,14 @@ class Watcher:
             self.__books.append(book)
 
     def get_list_name(self):
+        pattern = re.compile("[^a-zA-Z_:][^a-zA-Z0-9_:]*")
+
         query = urlsplit(self.list_url).query
         params = parse_qs(query)
 
-        return params["shelf"][0]
+        gr_list = params["shelf"][0]
+
+        return pattern.sub("", gr_list)
 
     def create_shops(self, book):
         shops = []
