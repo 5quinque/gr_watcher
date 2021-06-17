@@ -11,7 +11,7 @@ class BookDepository(Bookshop):
         self.label = "bookdepository"
 
         self.book_formats = {"Paperback": 1, "Hardback": 2}
-        self.languages = {"English": 123}
+        self.languages = {"English": 123, "French": 137}
 
         self.bookshop_base_url = "https://www.bookdepository.com"
         self.search_url = f"https://www.bookdepository.com/search?searchTerm={self.search_term}&availability=1&searchSortBy=price_low_high"

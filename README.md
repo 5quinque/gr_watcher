@@ -47,14 +47,14 @@ gr_watcher/__init__.py                       0      0   100%
 gr_watcher/__main__.py                      18     18     0%
 gr_watcher/book.py                          11      0   100%
 gr_watcher/bookshops/AbeBooks.py            17      0   100%
-gr_watcher/bookshops/BookDepository.py      21      2    90%
-gr_watcher/bookshops/Bookshop.py            42      3    93%
-gr_watcher/bookshops/Waterstones.py         10      0   100%
+gr_watcher/bookshops/BookDepository.py      21      0   100%
+gr_watcher/bookshops/Bookshop.py            40      2    95%
+gr_watcher/bookshops/Waterstones.py         14      0   100%
 gr_watcher/bookshops/__init__.py             0      0   100%
-gr_watcher/goodreads.py                     50      6    88%
+gr_watcher/goodreads.py                     50      2    96%
 gr_watcher/utils/__init__.py                 0      0   100%
 gr_watcher/utils/bcolors.py                 10      0   100%
-gr_watcher/watcher.py                       45      4    91%
+gr_watcher/watcher.py                       53      0   100%
 ------------------------------------------------------------
-TOTAL                                      224     33    85%
+TOTAL                                      234     22    91%
 ```

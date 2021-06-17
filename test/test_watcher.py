@@ -36,6 +36,11 @@ def test_default_initial_values(example_list, example_gauge):
 
     assert watcher.list_url == example_list
 
+def test_gauge_none(example_list):
+    watcher = Watcher(example_list)
+
+    assert watcher.gauge
+
 
 def test_get_books(example_list, example_gauge):
     watcher = Watcher(example_list, example_gauge)
@@ -51,3 +56,11 @@ def test_get_prices(example_list, example_gauge, books):
 
     for book in watcher.books:
         assert book.shop.price
+
+def test_output_prices(example_list, example_gauge, books):
+    watcher = Watcher(example_list, example_gauge)
+    watcher.books = books
+    watcher.get_prices()
+
+    watcher.output_prices()
+

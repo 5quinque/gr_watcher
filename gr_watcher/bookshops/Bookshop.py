@@ -26,9 +26,6 @@ class Bookshop:
             unidecode(f"{self.author} {self.title}")
         )
 
-    def set_format(self, format="Paperback"):
-        self.book_format = self.book_formats[format]
-
     def clean_price(self):
         price_regexp = re.compile(r"\d+\.\d+")
         cleaned_price = price_regexp.search(self.price)
