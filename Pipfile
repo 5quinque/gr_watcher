@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 beautifulsoup4 = "*"
 requests = "*"
-aiohttp = "*"
+aiohttp = ">=3.7.4"
 unidecode = "*"
 prometheus-client = "*"
 pytest = "*"
