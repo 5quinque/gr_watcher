@@ -1,5 +1,7 @@
 # gr_watcher
 
+Given a [Goodreads](https://goodreads.com/) list, find the lowest price for each book. Currently search the bookstores AbeBooks, BookDepository, and Waterstones. The results are outputed to stdout and logged to `gr_watcher.log` in the current working directory. Results are also othered as a [Prometheus](https://prometheus.io/) metric on port 5000. 
+
 ## Install dependencies
 
 ```bash
@@ -21,9 +23,7 @@ python -m gr_watcher
 
 ## Prometheus
 
-```
-prometheus.yml
-```
+Basic Prometheus config is in the [prometheus.yml](prometheus.yml) file
 
 ## Docker
 
