@@ -29,6 +29,6 @@ class BookDepository(Bookshop):
         return book_item.find(class_="item-img").find("a").get("href")
 
     def handle_redirect(self, soup, r):
-        self.price = soup.find(class_="sale-price").find(text=True)
-        self.clean_price()
+        price = soup.find(class_="sale-price").find(text=True)
+        self.clean_price(price)
         self.book_url = r.url

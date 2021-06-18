@@ -2,15 +2,6 @@ import pytest
 
 from gr_watcher.bookshops.BookDepository import BookDepository
 
-@pytest.fixture
-def author():
-    return "Nicholson Baker"
-
-@pytest.fixture
-def book_title():
-    return "The Mezzanine"
-
-
 def test_default_initial_values(author, book_title):
     bookdepo = BookDepository(author, book_title)
 

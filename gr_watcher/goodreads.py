@@ -60,25 +60,21 @@ class GoodReads:
             async with session.get(url) as response:
                 soup = BeautifulSoup(await response.read(), "html.parser")
 
-                try:
-                    # isbn = soup.find(itemprop="isbn")
-                    # [TODO] Catch errors at this point
-                    author = soup.find(class_="authorName").find(itemprop="name")
-                    title = soup.find(id="bookTitle")
+                # isbn = soup.find(itemprop="isbn")
+                # [TODO] Catch errors at this point
+                author = soup.find(class_="authorName").find(itemprop="name")
+                title = soup.find(id="bookTitle")
 
-                    # isbn = isbn.get_text().strip() if isbn else "ISBN Not Found"
-                    author = author.get_text().strip() if author else "Author Not Found"
-                    title = title.get_text().strip() if title else "Title Not Found"
+                # isbn = isbn.get_text().strip() if isbn else "ISBN Not Found"
+                author = author.get_text().strip() if author else "Author Not Found"
+                title = title.get_text().strip() if title else "Title Not Found"
 
-                    book_dict = {
-                        # "isbn": isbn,
-                        "title": title,
-                        "author": author,
-                        "url": url,
-                    }
+                book_dict = {
+                    # "isbn": isbn,
+                    "title": title,
+                    "author": author,
+                    "url": url,
+                }
 
-                    self.to_read_books.append(book_dict)
-                except:
-                    logging.error(
-                        f"Error getting book info.. {response.status} {response.read()}"
-                    )
+                self.to_read_books.append(book_dict)
+

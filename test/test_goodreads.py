@@ -3,10 +3,6 @@ import pytest
 from gr_watcher.goodreads import GoodReads
 
 @pytest.fixture
-def example_list():
-    return "https://www.goodreads.com/review/list/74698639-ryan?shelf=test"
-
-@pytest.fixture
 def example_list_multiple_pages():
     return "https://www.goodreads.com/review/list/74698639-ryan?shelf=to-read"
 

@@ -19,6 +19,7 @@ class Bookshop:
         self.author = author
         self.title = title
         self.price = 0.00
+        self.href = None
 
         self.bookshop_base_url = ""
         self.search_url = ""
@@ -26,13 +27,11 @@ class Bookshop:
             unidecode(f"{self.author} {self.title}")
         )
 
-    def clean_price(self):
+    def clean_price(self, price):
         price_regexp = re.compile(r"\d+\.\d+")
-        cleaned_price = price_regexp.search(self.price)
+        cleaned_price = price_regexp.search(price)
         if cleaned_price:
             self.price = float(cleaned_price.group())
-        else:
-            self.price = 0.00
 
     def get_price_text(self, book_item):
         return book_item.find(class_="price").find(text=True)
@@ -52,8 +51,8 @@ class Bookshop:
         book_item = self.get_book_item(soup)
 
         if book_item:
-            self.price = self.get_price_text(book_item)
-            self.clean_price()
+            price = self.get_price_text(book_item)
+            self.clean_price(price)
             href = self.get_book_url(book_item)
 
             self.book_url = f"{self.bookshop_base_url}{href}"

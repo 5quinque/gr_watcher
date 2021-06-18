@@ -8,11 +8,6 @@ from gr_watcher.watcher import Watcher
 
 
 @pytest.fixture
-def example_list():
-    return "https://www.goodreads.com/review/list/74698639-ryan?shelf=test"
-
-
-@pytest.fixture
 def example_gauge():
     return Gauge(
         "".join(random.choices(string.ascii_uppercase, k=10)),

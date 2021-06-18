@@ -9,7 +9,7 @@ import time
 from .watcher import Watcher
 
 
-def main():
+def main(sleep_time=3000):
     list = os.environ.get("GR_LIST")
 
     if list is None:
@@ -25,7 +25,10 @@ def main():
         watcher.get_prices()
         watcher.output_prices()
 
-        time.sleep(3000)
+        if sleep_time == None:
+            break
+
+        time.sleep(sleep_time)
 
 
 if __name__ == "__main__":
